@@ -168,6 +168,10 @@ class NtupleMaker: public edm::EDAnalyzer {
 		ULong64_t lumi;
         ULong64_t event;
  
+        string era_;
+        string vertexFilter_;
+        string l3Filter_;
+        string l1Filter_;
         string channel_;
         bool requireSameMother_;
         string hltName_;
@@ -193,11 +197,16 @@ NtupleMaker::NtupleMaker(const edm::ParameterSet & iConfig):
     candidate_Label(consumes<edm::View<pat::PackedCandidate>>(iConfig.getParameter<edm::InputTag>("Candidates"))),
     triggerList(iConfig.getUntrackedParameter<vector<string>>("triggerList")) {
 	
+    era_ = iConfig.existsAs<string>("era") ? iConfig.getParameter<string>("era") : "2016postVFP";
+    vertexFilter_ = iConfig.existsAs<string>("vertexFilter") ? iConfig.getParameter<string>("vertexFilter") : "hltVertexmumuFilterJpsiMuon";
+    l3Filter_ = iConfig.existsAs<string>("l3Filter") ? iConfig.getParameter<string>("l3Filter") : "hltTripleMuL3PreFiltered0";
+    l1Filter_ = iConfig.existsAs<string>("l1Filter") ? iConfig.getParameter<string>("l1Filter") : "hltL1sTripleMu0";
     channel_ = iConfig.getParameter<string>("channel");
     requireSameMother_ = iConfig.getParameter<bool>("requireSameMother");
     if(channel_ != "SPS" && channel_ != "DPS")
         throw cms::Exception("Configuration") << "Unsupported NtupleMaker channel: " << channel_;
     edm::Service <TFileService> fs;
+    fs->make<TNamed>("era", era_.c_str());
     fs->make<TNamed>("channel", channel_.c_str());
     fs->make<TNamed>("requireSameMother", requireSameMother_ ? "true" : "false");
     fs->make<TNamed>("configuration", iConfig.dump().c_str());
@@ -535,11 +544,11 @@ bool NtupleMaker::triggerMatch(const edm::Event &iEvent, const edm::Handle<edm::
         const vector<string>& fltLabels = trgObj.filterLabels();
         for(int j = 0; j < (int)fltLabels.size() && j < 10; j++) vout<<"Label: "<<fltLabels[j]<<endl;
         if(flag == Vtx) {
-            if(trgObj.filter("hltVertexmumuFilterJpsiMuon")) return true;
+            if(trgObj.filter(vertexFilter_)) return true;
         }else if(flag == L3) {
-            if(trgObj.filter("hltTripleMuL3PreFiltered0")) return true;
+            if(trgObj.filter(l3Filter_)) return true;
         }else if(flag == L1) {
-            if(trgObj.filter("hltL1sTripleMu0")) return true;
+            if(trgObj.filter(l1Filter_)) return true;
         }
     }
     return false;

@@ -2,6 +2,10 @@
 import FWCore.ParameterSet.Config as cms
 rootuple = cms.EDAnalyzer(
     'NtupleMaker',
+    era = cms.string('2016postVFP'),
+    vertexFilter = cms.string('hltVertexmumuFilterJpsiMuon'),
+    l3Filter = cms.string('hltTripleMuL3PreFiltered0'),
+    l1Filter = cms.string('hltL1sTripleMu0'),
     channel = cms.string('SPS'),
     requireSameMother = cms.bool(True),
     # dimuons = cms.InputTag("onia2MuMuPAT"),
@@ -38,3 +42,14 @@ rootuple = cms.EDAnalyzer(
 # Channel presets share all reconstruction and input settings.
 rootupleSPS = rootuple.clone(channel = 'SPS', requireSameMother = True)
 rootupleDPS = rootuple.clone(channel = 'DPS', requireSameMother = False)
+
+# Year and production channel are independent; original presets retain 2016 settings.
+rootuple2018 = rootuple.clone(
+    era = '2018',
+    triggerList = cms.untracked.vstring('HLT_Dimuon0_Jpsi3p5_Muon2_v'),
+    vertexFilter = 'hltVertexmumuFilterJpsiMuon3p5',
+    l3Filter = 'hltTripleMuL3PreFiltered222',
+    l1Filter = 'hltL1TripleMu5SQ3SQ0OQDoubleMu53SQOSMassMax9',
+)
+rootuple2018SPS = rootuple2018.clone(channel = 'SPS', requireSameMother = True)
+rootuple2018DPS = rootuple2018.clone(channel = 'DPS', requireSameMother = False)

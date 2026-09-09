@@ -35,13 +35,13 @@ process.maxEvents = cms.untracked.PSet(
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
 # '/store/data/Run2016B/Charmonium/AOD/21Feb2020_ver2_UL2016_HIPM-v1/240000/0011355B-1D48-A447-9343-0BEF32F09D9A.root'	
-'file:../../../BPH-RECOMINIAOD-DPS_13TeV.root'
+'file:../../../BPH-RECOMINIAOD-SPS_13TeV.root'
 ),
     secondaryFileNames = cms.untracked.vstring()
 )
 
 process.TFileService = cms.Service("TFileService",
-        fileName = cms.string('BPH-NTUPLE-DPS_13TeV.root'),
+        fileName = cms.string('BPH-NTUPLE-SPS_13TeV.root'),
 )
 
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True), numberOfThreads = cms.untracked.uint32(1))
@@ -125,8 +125,8 @@ process.onia2MuMuPAT.lowerPuritySelection = cms.string("(isGlobalMuon || isTrack
 
 # Schedule definition
 
-from NtupleMaker.NtupleMaker.NtupleMaker_cfi import rootuple2018DPS
-process.rootuple = rootuple2018DPS.clone()
+from NtupleMaker.NtupleMaker.NtupleMaker_cfi import rootuple2018SPS
+process.rootuple = rootuple2018SPS.clone()
 process.p = cms.Path(process.rootuple)
 process.schedule = cms.Schedule(process.BPHSkimPath, process.p)
 
