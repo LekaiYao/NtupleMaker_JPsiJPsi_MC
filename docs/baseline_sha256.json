@@ -1,0 +1,8 @@
+{
+  "NtupleMaker/BuildFile.xml": "7b3d81d0b875afb5b5a61f87abc414e32d51c0d63b6ca0b21e577484559f3a90",
+  "NtupleMaker/python/NtupleMaker_cfi.py": "22d9b37867603a202460cc121ce3f7b06eb2481a849fa438ff406bd8b324b310",
+  "NtupleMaker/python/__init__.py": "bce874b710d15dc3b30403167f4c861aba61d092afddda7c3b5f6ecac73db611",
+  "NtupleMaker/src/NtupleMaker.cc": "f27d787ee931aac08b1eebccd9e8c4ba8bb7e738eb046a41fcec84865b9f16e4",
+  "NtupleMaker/test/BPH_NtupleMaker.py": "47da51867cec0e69563c0150689cc4c1592e83905c469befb803348087a77618",
+  "NtupleMaker/test/crab_NTUPLE_DPS.py": "1ca8c457ee900657915fbd32b16c6d154d6764b541a7a25b3e1ac6bdee3fbc95"
+}

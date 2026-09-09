@@ -1,0 +1,10 @@
+*.root
+*.pyc
+__pycache__/
+crab_projects/
+crab_*/
+*.log
+FrameworkJobReport*.xml
+*.pkl
+*.tmp
+*~
