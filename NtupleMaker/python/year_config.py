@@ -20,6 +20,12 @@ YEAR_SETTINGS = {
     },
 }
 
+# preVFP shares the postVFP trigger definition; only conditions differ.
+YEAR_SETTINGS['2016preVFP'] = dict(
+    YEAR_SETTINGS['2016postVFP'],
+    globalTag='106X_mcRun2_asymptotic_preVFP_v9',
+)
+
 def getYearSettings(era):
     if era not in YEAR_SETTINGS:
         raise ValueError('Unsupported MC era: %s; choose %s' % (era, ', '.join(sorted(YEAR_SETTINGS))))
