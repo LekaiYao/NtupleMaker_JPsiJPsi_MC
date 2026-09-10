@@ -1,10 +1,8 @@
 # MC NtupleMaker
 
-用于 J/ψ 对 MC 的 Ntuple 制作。当前基线为 UL2016postVFP，共用 C++ 实现并提供 SPS/DPS 配置；运行入口当前选择 DPS。
+main 共用一套 C++ 物理操作，通过配置选择 2016postVFP 或 2018、SPS 或 DPS。CRAB 提交脚本由各项目的 new_MC_manager 或人工单独维护。
 
 ## 常用命令
-
-进入现有环境编译：
 
 ```bash
 cmssw-el7
@@ -12,70 +10,56 @@ cd /afs/cern.ch/user/l/leyao/work/26JJ/v2_crab_MC_Maker/ULPythia2016postVFP/CMSS
 cmsenv
 scram b -j 2
 cd NtupleMaker/NtupleMaker/test
-cmsRun BPH_NtupleMaker.py
+cmsRun BPH_NtupleMaker.py era=2016postVFP channel=DPS
 ```
 
-运行前准备 `CMSSW_10_6_20/src/BPH-RECOMINIAOD-DPS_13TeV.root`，或修改运行配置中的输入路径。当前示例使用 1 个线程，读取全部事件，输出 `BPH-NTUPLE-DPS_13TeV.root`。建仓库本身没有重新执行事件处理。
-
-CRAB 提交示例位于同一 test 目录：
+默认参数来自 `NtupleMaker/python/year_config.py`，目前为 2016postVFP、DPS。命令行可以覆盖年份、通道、输入、输出和事件数。使用本项目已有 SPS 输入的示例：
 
 ```bash
-source /cvmfs/cms.cern.ch/crab3/crab.sh prod
-crab submit -c crab_NTUPLE_DPS.py
+cmsRun BPH_NtupleMaker.py era=2016postVFP channel=SPS \
+  inputFiles=file:/eos/home-l/leyao/26JJ/v2_crab_MC_Maker/ULPythia2016postVFP/config_archive/previous_layout_20260909/CMSSW_10_6_20/src/BPH-RECOMINIAOD-MERGED-SPS_13TeV.root \
+  outputFile=Ntuple_2016postVFP_SPS.root
 ```
 
-提交前填写真实 `inputDataset`，检查任务名、输出目录及站点；仓库中的脚本保留本项目设置。
-
-## 通道配置
-
-`NtupleMaker/python/NtupleMaker_cfi.py` 提供 `rootupleSPS` 和 `rootupleDPS`。在 `NtupleMaker/test/BPH_NtupleMaker.py` 导入所需预设并 clone，切换时同时检查输入、输出名称。无需修改 C++。
-
-| 预设 | channel | requireSameMother |
-| --- | --- | --- |
-| rootupleSPS | SPS | True |
-| rootupleDPS | DPS | False |
-
-同母粒子条件是保留的样本配对规则，不能替代硬散射来源判定。真值母粒子访问已有空指针保护；详细待办见 [真值配对待办](docs/truth_pairing_pending.md)。ROOT 保存通道和配置信息。
-
-当前输入使用 `slimmedMuons::RECO`、`packedPFCandidates::RECO` 和 `TriggerResults::HLT`，对应合并生产输出。GlobalTag 为 `106X_mcRun2_asymptotic_v13`。
-
-## 仓库布局与安装
-
-仓库根目录必须放在 `CMSSW/src/NtupleMaker`，保留内层 `NtupleMaker` 包目录：
-
-```text
-NtupleMaker/                 ← Git 仓库根目录
-  NtupleMaker/
-    BuildFile.xml
-    src/NtupleMaker.cc
-    python/NtupleMaker_cfi.py
-    test/BPH_NtupleMaker.py
-    test/crab_NTUPLE_DPS.py
-  docs/
-```
-
-在另一个 CMSSW 环境的 src 下，使用 `git clone <仓库地址> NtupleMaker` 安装，再进入 cmssw-el7、初始化 cmsenv 并编译。不要压平两层目录，否则现有 Python 导入路径会改变。ROOT、日志、CRAB 工作目录及 Python 缓存不纳入 Git。
-
-## 多年份共用方案
-
-合并为负责 SPS/DPS、2016–2018 的仓库可行。保留共享 C++，将年份和通道作为独立配置维度；后续把目前 C++ 中的触发 filter 字符串移到年份配置，分别提供 2016preVFP、2016postVFP、2017、2018 的 GlobalTag、触发路径与输入标签预设。
-
-当前仅整理现有版本，尚未实现上述多年份预设。2018 参考源码与 2016 的主要差异为三个触发 filter 字符串；其与 L1、L3、顶点匹配的对应关系需要核验后再迁入。输入 process 名应按实际 MiniAOD 内容配置，不能仅凭年份推断。
-
-现有软件验证使用同一份 31 事件 SPS MiniAOD，SPS/DPS 两种预设均运行成功，SPS 输出与参数化前一致。这不代表真实 DPS 样本或其他年份已经验证；各年份、通道仍需代表性输入回归测试。
-
-## 来源与远端
-
-原始来源为 chensh 的 2016 DPS NtupleMaker：
-`/eos/user/c/chensh/JPsiJPsi/SKIM_tightfilter/DPS/ULPythia2016/CMSSW_10_6_20/src/NtupleMaker/`。
-
-本项目增加母粒子空指针保护、通道参数和输出配置记录，并适配当前合并生产的输入。建仓库前代码校验值记录在 [基线清单](docs/baseline_sha256.json)。未擅自指定原始代码的许可证。
-
-本地仓库使用 main 分支。远端地址尚未指定；创建空远端后，在仓库根目录执行：
+2018 使用相同入口：
 
 ```bash
-git remote add origin <仓库地址>
-git push -u origin main
+cmsRun BPH_NtupleMaker.py era=2018 channel=SPS \
+  inputFiles=file:/eos/home-l/leyao/26JJ/v2_crab_MC_Maker/ULPythia2018/CMSSW_10_6_20/src/BPH-RECOMINIAOD-SPS_13TeV.root \
+  outputFile=Ntuple_2018_SPS.root
 ```
 
-远端仓库名与可见性由维护者选择；若计划公开分发，应先与原作者确认授权及许可证。
+默认输入为相对 test 目录的 `../../../BPH-RECOMINIAOD-通道_13TeV.root`，默认输出为 `BPH-NTUPLE-通道_13TeV.root`，单线程、读取全部事件。输出文件名不用于判断年份或通道，多个年份共用目录时应显式指定不同输出名。
+
+## 配置与共用操作
+
+| 配置层 | 职责 |
+| --- | --- |
+| year_config.py | 默认年份、默认通道、各年份 GlobalTag、触发路径和三个 filter |
+| NtupleMaker_cfi.py | 共用输入标签、makeNtuple(era, channel)、SPS/DPS 同母粒子条件 |
+| BPH_NtupleMaker.py | 共用运行流程，解析参数并同时选择 GlobalTag 与分析器配置 |
+| NtupleMaker.cc | 共用真值配对、muon 选择、顶点拟合、触发匹配和 samePV |
+
+不支持的年份或通道会在加载时明确报错。2017 和 2016preVFP 尚未添加预设。原 rootupleSPS/rootupleDPS 仍指向 2016postVFP；rootuple2018SPS/rootuple2018DPS 也保留。
+
+SPS 使用 requireSameMother=True，DPS 使用 False；这仍是既有真值配对条件，不等同于严格的硬散射来源定义。母粒子空指针保护保留，硬散射来源等物理待办见 [真值配对记录](docs/truth_pairing_pending.md)。
+
+输入为 `slimmedMuons::RECO`、`packedPFCandidates::RECO` 和 `TriggerResults::HLT`，对应合并生产输出。ROOT 记录 era、channel、requireSameMother 及完整分析器配置。
+
+## 分支与生产维护
+
+- main：两个年份共用代码，物理操作只维护一次。
+- v2_ULPythia2016postVFP：年份整合前 main 的备份，提交 fd3a787。
+- v2_ULPythia2018：原来单独验证的 2018 版本。
+
+仓库必须位于 `CMSSW/src/NtupleMaker`，保留内层 NtupleMaker 包。不同工作目录分别更新到选定 commit 或 tag、编译和验证；固定生产批次的代码版本，不能将一个目录更新等同于所有环境已更新。
+
+本次未修改 CRAB 提交脚本。使用统一入口的 2018 CRAB 任务需由管理器或人工传入相应 pyCfgParams（例如 era=2018、channel=DPS），不能仅根据任务名自动识别年份。
+
+原始代码来自 chensh 的 2016 DPS NtupleMaker；2018 标签按官方 2018v32 菜单核验，保留此前对 L1 与顶点 filter 对调的修正。基线校验清单 `docs/baseline_sha256.json` 记录的是原始建仓库版本。
+
+## 回归验证
+
+在 2016 CMSSW_10_6_20 环境用统一 main 读取合并前相同的 SPS MiniAOD，按事件标识对齐并比较全部物理树分支。2016 和 2018、SPS 和 DPS 四组合的输出与各自原结果比较；输入均为 SPS，小样本回归不能代替真实 DPS 物理验证。
+
+原始报告与运行日志保存在项目 `config_archive/tests/year_unification_20260910/`。四组合均通过全 84 分支对比，具体差异和适用范围见 [年份整合回归记录](docs/year_unification_regression.md)。

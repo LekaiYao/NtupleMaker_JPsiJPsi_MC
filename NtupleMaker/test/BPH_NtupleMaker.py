@@ -7,6 +7,20 @@
 #2020.10.10 Jinfeng
 #Merge the Ntuple part into this file
 import FWCore.ParameterSet.Config as cms
+from FWCore.ParameterSet.VarParsing import VarParsing
+from NtupleMaker.NtupleMaker.year_config import DEFAULT_ERA, DEFAULT_CHANNEL, getYearSettings
+from NtupleMaker.NtupleMaker.NtupleMaker_cfi import makeNtuple
+
+options = VarParsing()
+options.register('era', DEFAULT_ERA, VarParsing.multiplicity.singleton, VarParsing.varType.string, 'MC era')
+options.register('channel', DEFAULT_CHANNEL, VarParsing.multiplicity.singleton, VarParsing.varType.string, 'SPS or DPS')
+options.register('inputFiles', [], VarParsing.multiplicity.list, VarParsing.varType.string, 'Input MiniAOD files')
+options.register('outputFile', '', VarParsing.multiplicity.singleton, VarParsing.varType.string, 'Output ROOT file')
+options.register('maxEvents', -1, VarParsing.multiplicity.singleton, VarParsing.varType.int, 'Events to read; -1 reads all')
+options.parseArguments()
+yearSettings = getYearSettings(options.era)
+ntuple = makeNtuple(options.era, options.channel)
+
 
 process = cms.Process('NtupleMaker')
 
@@ -28,20 +42,20 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(options.maxEvents)
 )
 
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
 # '/store/data/Run2016B/Charmonium/AOD/21Feb2020_ver2_UL2016_HIPM-v1/240000/0011355B-1D48-A447-9343-0BEF32F09D9A.root'	
-'file:../../../BPH-RECOMINIAOD-DPS_13TeV.root'
+*(options.inputFiles or ['file:../../../BPH-RECOMINIAOD-%s_13TeV.root' % options.channel])
 ),
     secondaryFileNames = cms.untracked.vstring()
 )
 
 process.TFileService = cms.Service("TFileService",
-        fileName = cms.string('BPH-NTUPLE-DPS_13TeV.root'),
+        fileName = cms.string(options.outputFile or 'BPH-NTUPLE-%s_13TeV.root' % options.channel),
 )
 
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True), numberOfThreads = cms.untracked.uint32(1))
@@ -100,7 +114,7 @@ process.BPHSkimSequence = cms.Sequence()#process.oniaPATMuonsWithoutTrigger*proc
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '106X_mcRun2_asymptotic_v13', '')		#for UL data 106X_dataRun2_v32
+process.GlobalTag = GlobalTag(process.GlobalTag, yearSettings['globalTag'], '')		#for UL data 106X_dataRun2_v32
 
 process.oniaSelectedMuons.cut = cms.string(''
 #                    'muonID(\"TMOneStationTight\")'
@@ -125,8 +139,7 @@ process.onia2MuMuPAT.lowerPuritySelection = cms.string("(isGlobalMuon || isTrack
 
 # Schedule definition
 
-from NtupleMaker.NtupleMaker.NtupleMaker_cfi import rootupleDPS
-process.rootuple = rootupleDPS.clone()
+process.rootuple = ntuple
 process.p = cms.Path(process.rootuple)
 process.schedule = cms.Schedule(process.BPHSkimPath, process.p)
 

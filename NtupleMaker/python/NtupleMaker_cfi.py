@@ -1,40 +1,39 @@
-
 import FWCore.ParameterSet.Config as cms
-rootuple = cms.EDAnalyzer(
+from NtupleMaker.NtupleMaker.year_config import getYearSettings
+
+# Shared reconstruction and input products for merged RECO+MiniAOD.
+_base = cms.EDAnalyzer(
     'NtupleMaker',
-    channel = cms.string('SPS'),
-    requireSameMother = cms.bool(True),
-    # dimuons = cms.InputTag("onia2MuMuPAT"),
-    # conversions = cms.InputTag("oniaPhotonCandidates","conversions"),# "conversions"
-    # TriggerSummaryAOD = cms.InputTag("hltTriggerSummaryAOD", "", "HLT"),
-    primaryVertices = cms.InputTag("offlineSlimmedPrimaryVertices"),# MINAOD #, "", "PAT"
-    # primaryVertices = cms.InputTag("offlinePrimaryVertices"),# Monte-Carlo
-    offlineBeamSpot = cms.InputTag("offlineBeamSpot"),#, "", "RECO"
-    muons = cms.InputTag("slimmedMuons", "", "RECO"),# MINIAOD
-    # muons = cms.InputTag("oniaSelectedMuons"),# Monte-Carlo
-    TriggerResults = cms.InputTag("TriggerResults", "", "HLT"),
-    triggerList = cms.untracked.vstring(
-        # 'HLT_Dimuon0_Jpsi3p5_Muon2_v',
-        'HLT_Dimuon0_Jpsi_Muon_v',
-        #'HLT_Trimuon5_3p5_2_Upsilon_Muon_v',       #2018  HLT string
-        #'HLT_TrimuonOpen_5_3p5_2_Upsilon_Muon_v',  #2018 HLT string
-        #'HLT_Trimuon2_Upsilon5_Muon_v'            #2017B HLT string
-        #'HLT_Trimuon5_3p5_2_Upsilon_Muon_v'       #2017 C,D, E and F HLT string
-        #'HLT_Dimuon0_Upsilon_Muon_v',             #2016 HLT string 
-        #'HLT_Dimuon0_Phi_Barrel_v',               #2016 HLT string 
-        #'HLT_Dimuon13_Upsilon_v',                 #2016 HLT string 
-        #'HLT_Dimuon8_Upsilon_Barrel_v',           #2016 HLT string
-    ),
-    Candidates = cms.InputTag("packedPFCandidates", "", "RECO"),
+    primaryVertices = cms.InputTag('offlineSlimmedPrimaryVertices'),
+    offlineBeamSpot = cms.InputTag('offlineBeamSpot'),
+    muons = cms.InputTag('slimmedMuons', '', 'RECO'),
+    TriggerResults = cms.InputTag('TriggerResults', '', 'HLT'),
+    Candidates = cms.InputTag('packedPFCandidates', '', 'RECO'),
     SecondSource = cms.SecSource(
-        "EmbeddedRootSource",
-        fileNames = cms.untracked.vstring(
-            'SpyFileNameWhichNeedsToBeSet SiStripSpyEventMatcher.SpySource.fileNames'
-        ),
+        'EmbeddedRootSource',
+        fileNames = cms.untracked.vstring('SpyFileNameWhichNeedsToBeSet SiStripSpyEventMatcher.SpySource.fileNames'),
         sequential = cms.untracked.bool(True),
-    )
+    ),
 )
 
-# Channel presets share all reconstruction and input settings.
-rootupleSPS = rootuple.clone(channel = 'SPS', requireSameMother = True)
-rootupleDPS = rootuple.clone(channel = 'DPS', requireSameMother = False)
+def makeNtuple(era, channel):
+    settings = getYearSettings(era)
+    if channel not in ('SPS', 'DPS'):
+        raise ValueError('Unsupported MC channel: %s' % channel)
+    return _base.clone(
+        era = cms.string(era),
+        channel = cms.string(channel),
+        requireSameMother = cms.bool(channel == 'SPS'),
+        triggerList = cms.untracked.vstring(settings['triggerPath']),
+        vertexFilter = cms.string(settings['vertexFilter']),
+        l3Filter = cms.string(settings['l3Filter']),
+        l1Filter = cms.string(settings['l1Filter']),
+    )
+
+# Keep existing import names for both previously validated configurations.
+rootuple = makeNtuple('2016postVFP', 'SPS')
+rootupleSPS = rootuple.clone()
+rootupleDPS = makeNtuple('2016postVFP', 'DPS')
+rootuple2018 = makeNtuple('2018', 'SPS')
+rootuple2018SPS = rootuple2018.clone()
+rootuple2018DPS = makeNtuple('2018', 'DPS')

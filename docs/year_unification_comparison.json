@@ -1,0 +1,141 @@
+{
+  "relative_tolerance": 1e-10, 
+  "cases": [
+    {
+      "differences_beyond_tolerance": [], 
+      "nonexact_values": 3, 
+      "event_ids_match": true, 
+      "compared_values": 6614, 
+      "roundoff_examples": [
+        {
+          "after": "0.0316693356089", 
+          "absolute_difference": 6.938893903907228e-18, 
+          "event": [
+            1, 
+            1, 
+            587
+          ], 
+          "branch": "REJpsi_massErr", 
+          "before": "0.0316693356089"
+        }, 
+        {
+          "after": "0.0294591471544", 
+          "absolute_difference": 3.469446951953614e-18, 
+          "event": [
+            1, 
+            1, 
+            587
+          ], 
+          "branch": "REJpsi_massErr", 
+          "before": "0.0294591471544"
+        }, 
+        {
+          "after": "0.0292787932807", 
+          "absolute_difference": 3.469446951953614e-18, 
+          "event": [
+            1, 
+            1, 
+            587
+          ], 
+          "branch": "REJpsi_massErr", 
+          "before": "0.0292787932807"
+        }
+      ], 
+      "max_absolute_difference": 6.938893903907228e-18, 
+      "branches": 84, 
+      "trigger_matched_events": 7, 
+      "RECO_pair_candidates": 13, 
+      "metadata_valid": true, 
+      "GEN_pair_valid_events": 31, 
+      "era": "2016postVFP", 
+      "events": 31, 
+      "channel": "SPS", 
+      "branch_schema_match": true
+    }, 
+    {
+      "differences_beyond_tolerance": [], 
+      "nonexact_values": 3, 
+      "event_ids_match": true, 
+      "compared_values": 6614, 
+      "roundoff_examples": [
+        {
+          "after": "0.0316693356089", 
+          "absolute_difference": 6.938893903907228e-18, 
+          "event": [
+            1, 
+            1, 
+            587
+          ], 
+          "branch": "REJpsi_massErr", 
+          "before": "0.0316693356089"
+        }, 
+        {
+          "after": "0.0294591471544", 
+          "absolute_difference": 3.469446951953614e-18, 
+          "event": [
+            1, 
+            1, 
+            587
+          ], 
+          "branch": "REJpsi_massErr", 
+          "before": "0.0294591471544"
+        }, 
+        {
+          "after": "0.0292787932807", 
+          "absolute_difference": 3.469446951953614e-18, 
+          "event": [
+            1, 
+            1, 
+            587
+          ], 
+          "branch": "REJpsi_massErr", 
+          "before": "0.0292787932807"
+        }
+      ], 
+      "max_absolute_difference": 6.938893903907228e-18, 
+      "branches": 84, 
+      "trigger_matched_events": 7, 
+      "RECO_pair_candidates": 13, 
+      "metadata_valid": true, 
+      "GEN_pair_valid_events": 31, 
+      "era": "2016postVFP", 
+      "events": 31, 
+      "channel": "DPS", 
+      "branch_schema_match": true
+    }, 
+    {
+      "differences_beyond_tolerance": [], 
+      "nonexact_values": 0, 
+      "event_ids_match": true, 
+      "compared_values": 7081, 
+      "roundoff_examples": [], 
+      "max_absolute_difference": 0.0, 
+      "branches": 84, 
+      "trigger_matched_events": 4, 
+      "RECO_pair_candidates": 6, 
+      "metadata_valid": true, 
+      "GEN_pair_valid_events": 28, 
+      "era": "2018", 
+      "events": 28, 
+      "channel": "SPS", 
+      "branch_schema_match": true
+    }, 
+    {
+      "differences_beyond_tolerance": [], 
+      "nonexact_values": 0, 
+      "event_ids_match": true, 
+      "compared_values": 7081, 
+      "roundoff_examples": [], 
+      "max_absolute_difference": 0.0, 
+      "branches": 84, 
+      "trigger_matched_events": 4, 
+      "RECO_pair_candidates": 6, 
+      "metadata_valid": true, 
+      "GEN_pair_valid_events": 28, 
+      "era": "2018", 
+      "events": 28, 
+      "channel": "DPS", 
+      "branch_schema_match": true
+    }
+  ]
+}
