@@ -1,6 +1,6 @@
 # MC NtupleMaker
 
-在 `CMSSW_10_6_20` 中读取 MC MiniAOD，生成 J/ψ 对的 Ntuple。支持 `2016preVFP`、`2016postVFP`、`2018`，以及 `SPS`、`DPS` 两种通道。
+在 `CMSSW_10_6_20` 中读取 MC MiniAOD，生成 J/ψ 对的 Ntuple。支持 `2016preVFP`、`2016postVFP`、`2017`、`2018`，以及 `SPS`、`DPS` 两种通道。
 
 ## 1. 安装与编译
 
@@ -28,10 +28,10 @@ DEFAULT_CHANNEL = 'DPS'
 
 | 参数 | 可选值 | 自动选择的配置 |
 | --- | --- | --- |
-| `DEFAULT_ERA` | `2016preVFP`、`2016postVFP`、`2018` | GlobalTag、触发路径和 filter |
+| `DEFAULT_ERA` | `2016preVFP`、`2016postVFP`、`2017`、`2018` | GlobalTag、触发路径和 filter |
 | `DEFAULT_CHANNEL` | `SPS`、`DPS` | 真值配对的同母粒子要求及默认输入输出文件名 |
 
-`SPS` 对应 `requireSameMother=True`，`DPS` 对应 `False`。2016preVFP 与 2016postVFP 共用触发设置，使用各自的 GlobalTag。2017 尚无预设。
+`SPS` 对应 `requireSameMother=True`，`DPS` 对应 `False`。2016preVFP 与 2016postVFP 共用触发设置，使用各自的 GlobalTag。2017 与 2018 共用触发设置，使用各自的 GlobalTag。
 
 切换年份或通道只需修改上述配置，无需修改 `NtupleMaker.cc`。单次运行也可使用命令行参数覆盖默认值：
 

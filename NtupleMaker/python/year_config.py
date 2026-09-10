@@ -26,6 +26,12 @@ YEAR_SETTINGS['2016preVFP'] = dict(
     globalTag='106X_mcRun2_asymptotic_preVFP_v9',
 )
 
+# 2017 shares the 2018 trigger definition; conditions follow UL17.
+YEAR_SETTINGS['2017'] = dict(
+    YEAR_SETTINGS['2018'],
+    globalTag='106X_mc2017_realistic_v8',
+)
+
 def getYearSettings(era):
     if era not in YEAR_SETTINGS:
         raise ValueError('Unsupported MC era: %s; choose %s' % (era, ', '.join(sorted(YEAR_SETTINGS))))
