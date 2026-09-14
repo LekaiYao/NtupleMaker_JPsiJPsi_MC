@@ -206,6 +206,7 @@ NtupleMaker::NtupleMaker(const edm::ParameterSet & iConfig):
     if(channel_ != "SPS" && channel_ != "DPS")
         throw cms::Exception("Configuration") << "Unsupported NtupleMaker channel: " << channel_;
     edm::Service <TFileService> fs;
+    fs->make<TNamed>("selectionVersion", "v2_fiducial");
     fs->make<TNamed>("era", era_.c_str());
     fs->make<TNamed>("channel", channel_.c_str());
     fs->make<TNamed>("requireSameMother", requireSameMother_ ? "true" : "false");
@@ -617,11 +618,11 @@ void NtupleMaker::setGENVariables(edm::Handle<reco::GenParticleCollection> prune
         TLorentzVector temp_muLV;
         temp_muLV.SetPtEtaPhiM(GEmu_pt[i], GEmu_eta[i], GEmu_phi[i], GEmu_mass[i]);
         temp_fourMuLV += temp_muLV;
-        if(fabs(GEmu_eta[i]) > 2.4 || GEmu_pt[i] < 3.5) passAcc = false;
+        if(fabs(GEmu_eta[i]) >= 2.4 || GEmu_pt[i] <= 2.5) passAcc = false;
     }
     GEevt_valid = valid;
     if(GEevt_valid) GEevt_fourMuMass = temp_fourMuLV.M();
-    GEevt_passAcc = passAcc;
+    GEevt_passAcc = valid && passAcc;
     vout<<"Find "<<GEmu_pt.size()<<" muons in GEN level."<<endl;
     return;
 }// finished Gen variables
@@ -637,7 +638,7 @@ void NtupleMaker::fourMuonFit(
     // muon pre-selection
     vector<pat::Muon> selMuons;
     for(edm::View<pat::Muon>::const_iterator recoMuon = muons->begin(); recoMuon != muons->end(); ++recoMuon) {
-        if(!(recoMuon->isGlobalMuon() || recoMuon->isTrackerMuon())) continue;
+        if(!recoMuon->isGlobalMuon()) continue;
         if(recoMuon->pt() < 2.0 || fabs(recoMuon->eta()) > 2.4)  continue;
         selMuons.push_back(*recoMuon);
         REmu_pt.push_back(recoMuon->pt());
@@ -646,10 +647,10 @@ void NtupleMaker::fourMuonFit(
         REmu_mass.push_back(recoMuon->mass());
         bool isSoft = muon::isSoftMuon(*recoMuon, thePrimaryV);
         REmu_isSoft.push_back(isSoft);
-        REmu_passCut.push_back(fabs(recoMuon->eta()) < 2.4 && recoMuon->pt() > 3.6 && isSoft);
+        REmu_passCut.push_back(fabs(recoMuon->eta()) < 2.4 && recoMuon->pt() > 2.5 && isSoft);
     }
     int nSelMuon = selMuons.size();
-    vout<<"Select ["<<nSelMuon<<"] global or tracker muons."<<endl;
+    vout<<"Select ["<<nSelMuon<<"] global muons."<<endl;
     if(nSelMuon < 4) return;
     // GEN matching of muons
     vector<vector<double>> drMap;// drMap[GENid][RECOid]
@@ -755,7 +756,7 @@ void NtupleMaker::fourMuonFit(
             int muId1 = i, muId2 = i;
             if(REmu_pt[i] > REmu_pt[j]) muId2 = j;
             else muId1 = j;
-            bool dimuCutPartial = dimuonVtxProb > 0.005 && fabs(temp_dimuLV.Pt() - 25) < 15 && fabs(temp_dimuLV.Rapidity()) < 2;//temp_dimuLV.Pt() > 5
+            bool dimuCutPartial = dimuonVtxProb > 0.005 && temp_dimuLV.Pt() > 5.0 && fabs(temp_dimuLV.Rapidity()) < 2;//temp_dimuLV.Pt() > 5
             // dimuon vertex fit with mass constraint
             if(dimuonMass < 2.7 || dimuonMass > 3.5) continue;// Current dimuon matches J/psi
             KinematicParticleFitter massConstraintFitter;
