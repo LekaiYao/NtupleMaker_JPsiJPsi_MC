@@ -1,8 +1,8 @@
 # MC NtupleMaker
 
-`v2_fiducial` 分支对所有年份、SPS/DPS 使用以下共同选择：GEN muon 的 acceptance 为 `pT > 2.5 GeV`、`|η| < 2.4`，且要求有效真值对；RECO muon 要求 global muon、Soft ID、`pT > 2.5 GeV`、`|η| < 2.4`。J/ψ 重建选择为 `pT > 5 GeV`、`|y| < 2`，不设 pT 上限；质量窗口和顶点概率要求保持原值。GEN acceptance 标记仅定义四 muon 条件，J/ψ 条件属于重建选择。
+`v3_fiducial` 分支对所有年份、SPS/DPS 使用以下共同选择：GEN muon 的 acceptance 为 `pT >= 3.5 GeV`、`|η| < 2.4`，且要求有效真值对；RECO muon 要求 global muon、Soft ID、`pT > 3.6 GeV`、`|η| < 2.4`。J/ψ 重建选择为 `pT > 5 GeV`、`|y| < 2`，不设 pT 上限；质量窗口和顶点概率要求保持原值。GEN acceptance 标记仅定义四 muon 条件，J/ψ 条件属于重建选择。
 
-生成样本时须配套使用 `FourMuonFilter.MinPt = 2.3 GeV` 的 Fragment。ROOT 的 `selectionVersion` 元数据为 `v2_fiducial`。
+生成样本时须配套使用 `FourMuonFilter.MinPt = 3.3 GeV` 的 Fragment。ROOT 的 `selectionVersion` 元数据为 `v3_fiducial`。
 
 在 `CMSSW_10_6_20` 中读取 MC MiniAOD，生成 J/ψ 对的 Ntuple。支持 `2016preVFP`、`2016postVFP`、`2017`、`2018`，以及 `SPS`、`DPS` 两种通道。
 
