@@ -1,0 +1,13 @@
+{
+  "dataset": "/Neutrino_E-10_gun/RunIISummer20ULPrePremix-UL17_106X_mc2017_realistic_v6-v3/PREMIX",
+  "site": "T2_CH_CERN",
+  "replica_state": "AVAILABLE",
+  "tape_excluded": true,
+  "query_cache_disabled": true,
+  "upstream_commit": "e2b9292f5b9386e7c9692c76a1dc01ee9c6491e3",
+  "upstream_script_sha256": "bcf5e84b9d768e91c7e461b396176dfaf6a7748e2b6fa870e5ba598dd28e3018",
+  "snapshot_created": "2026-09-10T05:09:45.341083+02:00",
+  "raw_count": 6838,
+  "file_count": 6838,
+  "sha256": "13be404659f04ba10ad5a95b5cd5a85f9040cb7f34f4d9210b1d9113697c0372"
+}
